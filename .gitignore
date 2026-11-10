@@ -9,5 +9,8 @@ __pycache__/
 mlruns/
 mlartifacts/
 
+# Intermediate model artifacts (final production artifacts are committed explicitly later)
+/models/
+
 # Env
 .env
