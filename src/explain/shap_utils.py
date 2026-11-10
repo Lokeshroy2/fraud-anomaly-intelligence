@@ -44,9 +44,10 @@ def top_reasons(explainer: shap.TreeExplainer, row: pd.DataFrame, n: int = 3) ->
     contributions = pd.Series(values, index=row.columns).sort_values(key=abs, ascending=False)
     reasons = []
     for feature in contributions.index[:n]:
+        raw_value = row.iloc[0][feature]
         reasons.append({
             "feature": feature,
-            "value": float(row.iloc[0][feature]),
+            "value": None if pd.isna(raw_value) else float(raw_value),
             "shap_value": float(contributions[feature]),
             "direction": "increases" if contributions[feature] > 0 else "decreases",
         })
@@ -80,7 +81,8 @@ def main() -> None:
         reasons = top_reasons(explainer, row, n=3)
         print(f"\nTransaction (score={scores[i]:.4f}):")
         for r in reasons:
-            print(f"  - {r['feature']}={r['value']:.3g} {r['direction']} fraud score "
+            value_str = f"{r['value']:.3g}" if r["value"] is not None else "NaN"
+            print(f"  - {r['feature']}={value_str} {r['direction']} fraud score "
                   f"(shap={r['shap_value']:+.4f})")
 
 

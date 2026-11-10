@@ -39,7 +39,7 @@ class TransactionIn(BaseModel):
 
 class Reason(BaseModel):
     feature: str
-    value: float
+    value: float | None
     shap_value: float
     direction: Literal["increases", "decreases"]
 
