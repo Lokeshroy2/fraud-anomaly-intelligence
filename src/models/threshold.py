@@ -13,6 +13,7 @@ These are stated assumptions for a portfolio project, not measured figures -
 in a real deployment they'd come from finance/ops data.
 """
 
+import json
 from pathlib import Path
 
 import joblib
@@ -120,6 +121,16 @@ def main() -> None:
 
     print("\n=== Model discrimination on test (for reference) ===")
     print(compute_metrics(y_test, score_test))
+
+    thresholds = {
+        "review_threshold": t_review,
+        "block_threshold": t_block,
+        "review_cost": REVIEW_COST,
+        "block_fp_cost": BLOCK_FP_COST,
+    }
+    with open(MODELS_DIR / "thresholds.json", "w") as f:
+        json.dump(thresholds, f, indent=2)
+    print(f"\nSaved thresholds to {MODELS_DIR / 'thresholds.json'}")
 
 
 if __name__ == "__main__":

@@ -20,6 +20,14 @@ FREQ_ENCODE_COLS = [
     "ProductCD", "DeviceType", "DeviceInfo",
 ]
 M_COLS = [f"M{i}" for i in range(1, 10)]
+BASE_NUMERIC_COLS = [
+    "TransactionAmt", "card1", "card2", "card3", "card5",
+    "addr1", "addr2", "dist1", "dist2",
+    "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10",
+    "C11", "C12", "C13", "C14",
+    "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9",
+    "D10", "D11", "D12", "D13", "D14", "D15",
+]
 HIGH_MISSING_THRESHOLD = 0.90
 V_CORR_THRESHOLD = 0.90
 
@@ -140,18 +148,18 @@ class FeatureEngineer:
         parts.append(user_df[["user_txn_count", "user_avg_amount"]])
 
         parts.append(df[self.selected_v_cols_])
-
-        base_numeric_cols = [
-            "TransactionAmt", "card1", "card2", "card3", "card5",
-            "addr1", "addr2", "dist1", "dist2",
-            "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10",
-            "C11", "C12", "C13", "C14",
-            "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9",
-            "D10", "D11", "D12", "D13", "D14", "D15",
-        ]
-        parts.append(df[[c for c in base_numeric_cols if c in df.columns]])
+        parts.append(df[[c for c in BASE_NUMERIC_COLS if c in df.columns]])
 
         return pd.concat(parts, axis=1)
+
+    def expected_raw_columns(self) -> list[str]:
+        """Raw input columns this (fitted) instance needs from `transform`'s
+        input DataFrame. Used by the API to reindex a single incoming
+        transaction into the right shape before featurizing it."""
+        if not self.fitted_:
+            raise RuntimeError("FeatureEngineer.fit() must be called before expected_raw_columns()")
+        cols = {"TransactionDT", *M_COLS, *self.freq_maps_.keys(), *BASE_NUMERIC_COLS, *self.selected_v_cols_}
+        return sorted(cols)
 
 
 if __name__ == "__main__":

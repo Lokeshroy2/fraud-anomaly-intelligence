@@ -1,0 +1,6 @@
+{
+  "review_threshold": 0.02,
+  "block_threshold": 0.8543121477275061,
+  "review_cost": 5.0,
+  "block_fp_cost": 25.0
+}
