@@ -69,15 +69,19 @@ def _select_v_columns(train_df: pd.DataFrame, v_cols: list[str]) -> list[str]:
             selected.append(cols[0])
             continue
         # Within a missingness-pattern group, cluster by correlation and
-        # keep one column per cluster (greedy union-find style).
+        # keep one column per cluster (greedy, deterministic column order —
+        # a plain `set` here would pick differently each run due to Python's
+        # per-process string hash randomization).
         sub = train_df[cols].fillna(-999)
         corr = sub.corr().abs()
-        remaining = set(cols)
-        while remaining:
-            col = remaining.pop()
+        remaining = sorted(cols, key=lambda c: int(c[1:]))
+        dropped: set[str] = set()
+        for col in remaining:
+            if col in dropped:
+                continue
             selected.append(col)
             correlated = corr.index[(corr[col] >= V_CORR_THRESHOLD) & (corr.index != col)]
-            remaining -= set(correlated.tolist())
+            dropped.update(correlated.tolist())
     return sorted(selected, key=lambda c: int(c[1:]))
 
 
