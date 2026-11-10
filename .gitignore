@@ -1,1 +1,13 @@
 ieee-fraud-detection/*.csv
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# ML experiment tracking (local runs, not portfolio artifacts)
+mlruns/
+mlartifacts/
+
+# Env
+.env
