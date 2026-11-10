@@ -1,0 +1,15 @@
+ieee-fraud-detection/
+.venv/
+.git/
+__pycache__/
+*.pyc
+mlruns/
+mlartifacts/
+notebooks/
+reports/
+tests/
+models/*.joblib
+models/*.json
+!models/feature_engineer.joblib
+!models/lightgbm_best.joblib
+!models/thresholds.json
